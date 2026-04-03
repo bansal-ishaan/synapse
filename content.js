@@ -187,13 +187,84 @@ function injectZenSplitScreen(extractedData, scorer) {
 }
 
 
+function initRightPanel() {
+    const rightPane = document.getElementById('neuro-right-content');
+    if (!rightPane) return;
+    rightPane.innerHTML = `
+        <div id="neuro-ai-metadata"></div>
+        <h3 style="color:#818cf8; font-size:14px; border-bottom:1px solid #3730a3; padding-bottom:10px; margin-bottom: 20px;">Simplified Content</h3>
+        <div id="neuro-ai-chunks"></div>
+        <div id="neuro-ai-status" style="text-align: center; margin-top: 40px; opacity: 0.6;">
+            <h3 style="font-size:30px; margin-bottom:10px;">🤖</h3>
+            <i id="neuro-status-text">Waking up AI...</i>
+        </div>
+    `;
+}
+
+function updateAIStatus(message) {
+    const statusEl = document.getElementById('neuro-status-text');
+    const statusBox = document.getElementById('neuro-ai-status');
+    if (statusEl) statusEl.innerText = message;
+    if (message === "Done!") {
+        if (statusBox) statusBox.style.display = 'none';
+    }
+}
+
+function renderAIMetadata(data) {
+    const metaBox = document.getElementById('neuro-ai-metadata');
+    if (!metaBox) return;
+    
+    if (data.error) {
+        metaBox.innerHTML = `<div style="text-align:center; color:#ef4444; padding-top:40px;"><h2>⚠️ API Connection Error</h2><p>${data.error}</p></div>`;
+        return;
+    }
+
+    metaBox.innerHTML = `
+        <div style="background: #312e81; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #4338ca; animation: fadeIn 0.5s;">
+            <span style="font-weight:bold; color:#a5b4fc; text-transform:uppercase; font-size:12px; letter-spacing:1px;">Tone Indicator</span>
+            <div style="font-size: 24px; font-weight: bold; margin-top: 5px; color: #fff;">${data.page_tone || "Neutral"}</div>
+        </div>
+        <div style="background: #1e1b4b; padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px dashed #3730a3; animation: fadeIn 0.5s;">
+            <h3 style="color:#818cf8; font-size:14px; margin-top:0;">📝 TL;DR Summary</h3>
+            <p style="font-size: 18px; margin-bottom:0; color:#e0e7ff;">${data.page_summary}</p>
+        </div>
+    `;
+}
+
+function renderAIChunk(data) {
+    const chunkBox = document.getElementById('neuro-ai-chunks');
+    if (!chunkBox || data.error) return; 
+
+    let html = "";
+    if (data.simplified_chunks) {
+        data.simplified_chunks.forEach(chunk => {
+            html += `<p style="margin-bottom: 25px; animation: fadeIn 0.5s;">${chunk.text}</p>`;
+        });
+        
+        if (!document.getElementById('neuro-animations')) {
+            const style = document.createElement('style');
+            style.id = 'neuro-animations';
+            style.innerHTML = `@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`;
+            document.head.appendChild(style);
+        }
+    }
+    chunkBox.innerHTML += html;
+}
+
 // -- 5. LISTENERS --
 if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === "extract_dom") {
             applyMediaControl();
             const domData = extractAndTagContent();
+            initRightPanel(); 
             sendResponse(domData);
+        } else if (request.action === "update_status") {
+            updateAIStatus(request.message);
+        } else if (request.action === "render_ai_metadata") {
+            renderAIMetadata(request.data);
+        } else if (request.action === "render_ai_chunk") {
+            renderAIChunk(request.data);
         }
         return true; 
     });
