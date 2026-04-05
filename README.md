@@ -1,5 +1,11 @@
 # ✨ Synapse — The Neuro-Inclusive Digital Sanctuary
 
+## 🎥 Demo Video
+
+[![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/YuDU99XX19Q)
+
+👉 Click the image above to watch the full demo
+
 > **Restructuring the internet for cognitively diverse minds.** A high-performance Chrome extension designed to eliminate sensory overload and cognitive barriers for ADHD, Autism, and Dyslexic users.
 
 ---
