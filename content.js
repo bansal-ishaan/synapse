@@ -224,10 +224,16 @@ function buildReaderShell(load) {
             #neuro-root-wrapper.use-bionic .neuro-bionic{font-weight:800!important;color:#0f172a}
             #neuro-root-wrapper .neuro-tts-word { transition: background-color 0.2s, box-shadow 0.2s; display:inline; border-radius:4px; position:relative; }
             #neuro-root-wrapper .neuro-highlight { background-color: rgba(59,130,246,0.2) !important; color: #1e3a8a !important; box-shadow: 0 0 10px rgba(59,130,246,0.1), 0 0 4px rgba(59,130,246,0.1) !important; z-index: 2; padding: 0 4px; display: inline-block; }
-            #neuro-root-wrapper .neuro-tts-btn { opacity:0; pointer-events:none; transform:translateY(5px); transition:0.3s cubic-bezier(0.16,1,0.3,1); }
-            #neuro-root-wrapper .neuro-ai-metadata-card:hover .neuro-tts-btn, #neuro-root-wrapper .neuro-ai-card:hover .neuro-tts-btn, 
-            #neuro-root-wrapper .speaking-now .neuro-tts-btn { opacity:1; pointer-events:auto; transform:translateY(0); }
-            #neuro-root-wrapper .neuro-ai-card:hover { transform:translateY(-4px); box-shadow:0 12px 24px rgba(0,0,0,0.06); }
+            #neuro-root-wrapper.hide-tts .neuro-tts-btn { display: none !important; }
+            #neuro-root-wrapper .neuro-tts-btn { 
+                opacity: 0; pointer-events: none; transform: translateY(5px); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+                background: #f1f5f9; color: #64748b; border: none; padding: 6px 12px; border-radius: 999px;
+                font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;
+            }
+            #neuro-root-wrapper .neuro-ai-metadata-card:hover .neuro-tts-btn, 
+            #neuro-root-wrapper .neuro-ai-card:hover .neuro-tts-btn, 
+            #neuro-root-wrapper .speaking-now .neuro-tts-btn { opacity: 1; pointer-events: auto; transform: translateY(0); }
+            #neuro-root-wrapper .neuro-ai-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.06); }
             @keyframes slideUp{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
         </style>
 
@@ -236,26 +242,30 @@ function buildReaderShell(load) {
 
         <div style="flex:1;display:flex;overflow:hidden;margin-top:90px;">
             <!-- TYPOGRAPHY SIDEBAR (left) -->
-            <div id="neuro-typo-sidebar" style="flex:0 0 220px;padding:30px 20px;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;gap:30px;background:#fff;overflow-y:auto;">
+            <div id="neuro-typo-sidebar" style="flex: 0 0 240px; padding: 40px 24px; border-right: 1px solid #f1f5f9; background: #fff; box-shadow: 10px 0 30px rgba(0,0,0,0.02); z-index: 10; display: flex; flex-direction: column; gap: 32px; overflow-y: auto;">
                 <div>
-                    <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#64748b;margin-bottom:16px;">Text Size</div>
-                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;color:#1e293b;font-weight:600;"><span>Size</span><span id="neuro-size-val" style="color:#3b82f6;">21px</span></div>
-                    <input type="range" id="neuro-slider-size" min="16" max="36" value="21" style="width:100%;accent-color:#3b82f6;cursor:pointer;height:5px;">
+                    <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; margin-bottom: 20px;">Typography</div>
+                    
+                    <div style="margin-bottom: 24px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; color: #334155; font-weight: 600;"><span>Text Size</span><span id="neuro-size-val" style="color: #3b82f6;">21px</span></div>
+                        <input type="range" id="neuro-slider-size" min="16" max="36" value="21" style="width: 100%; accent-color: #3b82f6; cursor: pointer; height: 5px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 24px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; color: #334155; font-weight: 600;"><span>Line Spacing</span><span id="neuro-space-val" style="color: #3b82f6;">1.8</span></div>
+                        <input type="range" id="neuro-slider-space" min="1.0" max="3.0" step="0.1" value="1.8" style="width: 100%; accent-color: #3b82f6; cursor: pointer; height: 5px;">
+                    </div>
                 </div>
-                <div>
-                    <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#64748b;margin-bottom:16px;">Line Spacing</div>
-                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;color:#1e293b;font-weight:600;"><span>Spacing</span><span id="neuro-space-val" style="color:#3b82f6;">1.8</span></div>
-                    <input type="range" id="neuro-slider-space" min="1.2" max="3.0" step="0.1" value="1.8" style="width:100%;accent-color:#3b82f6;cursor:pointer;height:5px;">
-                </div>
-                <div style="border-top:1px solid #f1f5f9;padding-top:18px;">
-                    <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#64748b;margin-bottom:14px;">Controls</div>
-                    ${quickToggle('neuro-toggle-dyslexic', 'Dyslexic', false)}
-                    <div style="margin-top:12px;"></div>
-                    ${quickToggle('neuro-toggle-bionic', 'Bionic', false)}
-                    <div style="margin-top:12px;"></div>
-                    ${quickToggle('neuro-toggle-media', 'Focus', true)}
-                    <div style="margin-top:12px;"></div>
-                    ${quickToggle('neuro-toggle-tts', 'Show TTS', true)}
+
+                <div style="border-top: 1px solid #f1f5f9; padding-top: 32px;">
+                    <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; margin-bottom: 20px;">Reader Modes</div>
+                    ${quickToggle('neuro-toggle-dyslexic', 'Dyslexic Font', false)}
+                    <div style="margin-top: 16px;"></div>
+                    ${quickToggle('neuro-toggle-bionic', 'Bionic Scanning', false)}
+                    <div style="margin-top: 16px;"></div>
+                    ${quickToggle('neuro-toggle-media', 'Sensory Focus', true)}
+                    <div style="margin-top: 16px;"></div>
+                    ${quickToggle('neuro-toggle-tts', 'Speech Assist', true)}
                 </div>
             </div>
 
@@ -323,7 +333,10 @@ function wireAllControls(overlay) {
         w.style.setProperty('--neuro-line-height', e.target.value);
     };
 
-    document.getElementById('neuro-toggle-tts').onchange      = e => w.classList.toggle('hide-tts', !e.target.checked);
+    document.getElementById('neuro-toggle-tts').onchange      = e => {
+        w.classList.toggle('hide-tts', !e.target.checked);
+        if (!e.target.checked) window.speechSynthesis.cancel();
+    };
     document.getElementById('neuro-toggle-dyslexic').onchange = e => w.classList.toggle('use-dyslexic', e.target.checked);
     document.getElementById('neuro-toggle-bionic').onchange   = e => w.classList.toggle('use-bionic', e.target.checked);
     document.getElementById('neuro-toggle-media').onchange    = e => {
@@ -391,21 +404,21 @@ function renderAIMetadata(data) {
     }
     const safe = (data.page_summary || '').replace(/"/g, '&quot;');
     box.innerHTML = `
-        <div class="neuro-ai-metadata-card" style="display:flex;gap:24px;margin-bottom:50px;animation:slideUp 0.7s forwards;align-items:stretch;">
+        <div class="neuro-ai-metadata-card" style="display:flex; gap:24px; margin-bottom:50px; animation:slideUp 0.7s forwards; align-items:stretch;">
             <!-- FULL-WIDTH LEFT SUMMARY -->
-            <div style="flex:1;background:#fff;border:1px solid #e2e8f0;padding:50px 60px;border-radius:32px;border-left:4px solid #3b82f6;box-shadow:0 8px 30px rgba(0,0,0,0.04);display:flex;flex-direction:column;align-items:flex-start;text-align:left;">
-                <h3 style="color:#3b82f6;font-size:12px;text-transform:uppercase;letter-spacing:2px;margin:0 0 25px;font-weight:800;">📝 Quick Summary</h3>
-                <p style="font-size:var(--neuro-font-size,22px);color:#1e293b;font-weight:400;line-height:1.6;margin:0;">${formatBionicText(data.page_summary)}</p>
+            <div style="flex:1; background:#fff; border:1px solid #f1f5f9; padding:50px 60px; border-radius:32px; border-left:4px solid #3b82f6; box-shadow:0 8px 30px rgba(0,0,0,0.02); display:flex; flex-direction:column; align-items:flex-start; text-align:left;">
+                <h3 style="color:#3b82f6; font-size:12px; text-transform:uppercase; letter-spacing:2px; margin:0 0 25px; font-weight:800;">📝 Quick Summary</h3>
+                <p style="font-size:var(--neuro-font-size, 22px); color:#1e293b; font-weight:400; line-height:var(--neuro-line-height, 1.6); margin:0;">${formatBionicText(data.page_summary)}</p>
                 <div style="margin-top:30px;">
-                    <button class="neuro-tts-btn" data-text="${safe}" style="background:rgba(59,130,246,0.1);color:#2563eb;border:1px solid rgba(59,130,246,0.2);padding:12px 28px;border-radius:30px;cursor:pointer;font-size:15px;font-weight:700;font-family:'Outfit',sans-serif;transition:0.3s;">🔊 Listen to Summary</button>
+                    <button class="neuro-tts-btn" data-text="${safe}">🔊 Listen</button>
                 </div>
             </div>
 
             <!-- TONE BOX ON RIGHT -->
-            <div style="flex:0 0 160px;background:#f1f5f9;border:1px solid #e2e8f0;padding:30px 10px;border-radius:32px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
-                <span style="font-weight:800;color:#64748b;text-transform:uppercase;font-size:11px;letter-spacing:1.5px;margin-bottom:15px;">Tone Check</span>
-                <div style="font-size:22px;font-weight:700;color:#0f172a;text-transform:capitalize;">${data.page_tone || 'Neutral'}</div>
-                <div style="margin-top:10px;font-size:30px;opacity:0.8;">${(EMOTION_MAP[(data.page_tone || '').toLowerCase()] || EMOTION_MAP.neutral).emoji}</div>
+            <div style="flex:0 0 160px; background:#fff; border:1px solid #f1f5f9; padding:30px 10px; border-radius:32px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; box-shadow: 0 4px 20px rgba(0,0,0,0.02);">
+                <span style="font-weight:800; color:#94a3b8; text-transform:uppercase; font-size:10px; letter-spacing:2px; margin-bottom:15px;">Tone Analysis</span>
+                <div style="font-size:22px; font-weight:700; color:#1e293b; text-transform:capitalize;">${data.page_tone || 'Neutral'}</div>
+                <div style="margin-top:10px; font-size:30px; opacity:0.8;">${(EMOTION_MAP[(data.page_tone || '').toLowerCase()] || EMOTION_MAP.neutral).emoji}</div>
             </div>
         </div>`;
 }
@@ -422,12 +435,12 @@ function renderAIChunk(data) {
         const safe = [heading, ...bullets].join(' ').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
         html += `
-            <div class="neuro-ai-card" style="margin-bottom:30px;animation:slideUp 0.6s forwards;background:#fff;border:1px solid #e2e8f0;padding:40px;border-radius:28px;position:relative;transition:0.3s;box-shadow:0 4px 12px rgba(0,0,0,0.02);">
-                <div style="display:inline-flex;align-items:center;gap:6px;background:${emo.bg};border:1px solid ${emo.border};color:${emo.color};padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;margin-bottom:18px;"><span>${emo.emoji}</span><span>${emotion}</span></div>
-                <button class="neuro-tts-btn" data-text="${safe}" style="position:absolute;top:30px;right:30px;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;padding:10px 20px;border-radius:24px;cursor:pointer;font-size:13px;font-weight:600;transition:0.2s;font-family:'Outfit',sans-serif;">🔊 Speak</button>
-                <h4 style="color:#0f172a;margin:0 0 25px;font-size:calc(var(--neuro-font-size,21px) * 1.1);font-weight:600;padding-right:100px;letter-spacing:-0.4px;">${formatBionicText(heading)}</h4>
-                <ul style="color:#334155;font-size:var(--neuro-font-size,21px);line-height:1.8;margin:0;padding-left:15px;list-style-type:none;font-weight:300;">
-                    ${bullets.map(bp => `<li style="margin-bottom:14px;display:flex;gap:15px;"><span style="color:#3b82f6;font-weight:700;margin-top:2px;">→</span><span>${formatBionicText(bp)}</span></li>`).join('')}
+            <div class="neuro-ai-card" style="margin-bottom:30px; animation:slideUp 0.6s forwards; background:#fff; border:1px solid #f1f5f9; padding:40px 48px; border-radius:28px; position:relative; transition:0.3s cubic-bezier(0.16,1,0.3,1); box-shadow:0 4px 20px rgba(0,0,0,0.02);">
+                <div style="display:inline-flex; align-items:center; gap:6px; background:${emo.bg}; border:1px solid ${emo.border}; color:${emo.color}; padding:6px 14px; border-radius:20px; font-size:11px; font-weight:700; text-transform:uppercase; margin-bottom:18px;"><span>${emo.emoji}</span><span>${emotion}</span></div>
+                <button class="neuro-tts-btn" data-text="${safe}" style="position:absolute; top:32px; right:32px;">🔊 Speak</button>
+                <h4 style="color:#0f172a; margin:0 0 25px; font-size:calc(var(--neuro-font-size, 21px) * 1.15); font-weight:700; padding-right:110px; letter-spacing:-0.4px;">${formatBionicText(heading)}</h4>
+                <ul style="color:#334155; font-size:var(--neuro-font-size, 21px); line-height:var(--neuro-line-height, 1.8); margin:0; padding-left:15px; list-style-type:none; font-weight:400;">
+                    ${bullets.map(bp => `<li style="margin-bottom:14px; display:flex; gap:16px;"><span style="color:#3b82f6; font-weight:700; margin-top:2px;">→</span><span>${formatBionicText(bp)}</span></li>`).join('')}
                 </ul>
             </div>`;
     });

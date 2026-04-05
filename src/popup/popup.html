@@ -1,116 +1,141 @@
-
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Synapse Launcher</title>
+    <title>Synapse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --accent: #3b82f6;
+            --accent-soft: rgba(59, 130, 246, 0.1);
+            --bg: #ffffff;
+            --text: #1e293b;
+            --text-soft: #64748b;
+        }
         body {
-            font-family: 'Outfit', -apple-system, sans-serif;
-            width: 320px;
+            font-family: 'Outfit', sans-serif;
+            width: 280px;
             margin: 0;
-            padding: 24px;
-            background: #f8fafc;
-            color: #1e293b;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+            border-radius: 20px;
         }
-        h2 {
-            margin: 0 0 20px 0;
-            font-size: 20px;
-            color: #0f172a;
+        .header {
+            padding: 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            border-bottom: 1px solid #f1f5f9;
         }
-        .icon {
-            background: #3b82f6;
-            color: white;
-            width: 28px;
-            height: 28px;
-            display: inline-flex;
+        .logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
             justify-content: center;
-            align-items: center;
-            border-radius: 8px;
-            font-size: 14px;
+            color: white;
+            font-size: 18px;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
         }
-        .mode-selector {
+        .title {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #0f172a;
+        }
+        .main {
+            padding: 20px;
+        }
+        .selector {
             display: flex;
-            background: #e2e8f0;
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 20px;
+            gap: 8px;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: 14px;
+            margin-bottom: 16px;
         }
-        .mode-btn {
+        .tab {
             flex: 1;
-            padding: 10px;
+            padding: 8px;
             border: none;
             background: transparent;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
-            color: #64748b;
-            transition: 0.2s;
+            color: var(--text-soft);
+            transition: 0.3s;
         }
-        .mode-btn.active {
+        .tab.active {
             background: white;
-            color: #0f172a;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            color: var(--accent);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
-        .description {
+        .info {
             font-size: 13px;
-            color: #475569;
-            line-height: 1.5;
-            margin-bottom: 20px;
-            min-height: 40px;
+            color: var(--text-soft);
+            margin-bottom: 18px;
+            min-height: 42px;
+            line-height: 1.4;
         }
-        #error-box {
-            background: #fef2f2;
-            color: #ef4444;
-            border: 1px solid #fecaca;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            margin-bottom: 20px;
-            display: none;
-        }
-        #activate-btn {
+        #action-btn {
             width: 100%;
-            background: #3b82f6;
+            background: var(--accent);
             color: white;
             border: none;
             padding: 14px;
-            border-radius: 12px;
+            border-radius: 16px;
             font-size: 15px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.3s;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
         }
-        #activate-btn:disabled {
-            background: #94a3b8;
+        #action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+        #action-btn:active {
+            transform: translateY(0);
+        }
+        #action-btn:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
             cursor: not-allowed;
-            opacity: 0.7;
+            transform: none;
         }
-        #activate-btn:not(:disabled):hover {
-            background: #2563eb;
+        .footer {
+            padding: 0 20px 20px;
+            font-size: 11px;
+            color: #cbd5e1;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <h2><span class="icon">✨</span> Synapse</h2>
+    <div class="header">
+        <div class="logo">✨</div>
+        <div class="title">Synapse</div>
+    </div>
     
-    <div class="mode-selector">
-        <button class="mode-btn active" data-mode="text">Articles</button>
-        <button class="mode-btn" data-mode="youtube">YouTube</button>
-        <button class="mode-btn" data-mode="vision">Visuals</button>
+    <div class="main">
+        <div class="selector">
+            <button class="tab active" data-mode="text">Articles</button>
+            <button class="tab" data-mode="vision">Visuals</button>
+        </div>
+        
+        <div class="info" id="mode-info">
+            Select a mode or use the inline YouTube toggle when viewing a video.
+        </div>
+        
+        <button id="action-btn">Process This Page</button>
     </div>
-
-    <div class="description" id="mode-desc">
-        Simplifies web layouts and text for cognitive accessibility. Focuses on articles and blogs.
-    </div>
-
-    <div id="error-box"></div>
-
-    <button id="activate-btn">Process This Page</button>
+    
+    <div class="footer">Enhancements Active Globally</div>
 
     <script src="popup.js"></script>
 </body>

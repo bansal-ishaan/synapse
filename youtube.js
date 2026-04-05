@@ -1,41 +1,21 @@
 // youtube.js – Synapse Main Controller for YouTube
-// Focus: Comments Hidden + Shorts Timer. Other features removed as requested.
+// Focus: Comments Hidden toggle injected inline. Other features removed as requested.
 
-console.log('Synapse: YouTube module loaded (Simplified).');
+console.log('Synapse: YouTube module loaded.');
 
-let _hudActive = false;
-
+// Focus Mode state isn't strictly needed for YT comment shield logic, but the script runs.
+// On YouTube pages, Zen Mode and Simplify buttons are disabled.
 window.commentShield = null;
-window.shortsGuard   = null;
 
 window.initModules = function() {
     if (window.commentShield) return; // Already initialized
     window.commentShield = window.initCommentShield();
-    window.shortsGuard   = window.initShortsGuard();
-};
-
-window.updateHUD = function() {
-    if (!window.hudState) return;
-    const { shortsGuard, commentShield } = window;
-
-    if (window.hudState.shortsGuard) shortsGuard?.enable(); else shortsGuard?.disable();
-    commentShield?.setMode(window.hudState.commentShield);
 };
 
 async function activateSynapseYouTube() {
-    if (_hudActive) {
-        let hud = document.getElementById('synapse-youtube-hud');
-        if (hud) hud.style.display = 'block';
-        return;
-    }
-    
-    _hudActive = true;
-    window.initModules();
-    await window.loadState();
-    window.createHUD();
-    window.updateHUD();
-
-    if (window.commentShield) window.commentShield.init(); 
+    // Left empty for compatibility if popup sends "activate_youtube_mode", 
+    // although Focus Mode logic takes over most UI flows now.
+    // The comment shield self-initializes below anyway.
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -44,3 +24,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse({ success: true });
     }
 });
+
+// Self-initialize the comment shield inline toggle
+window.initModules();
+if (window.commentShield) {
+    window.commentShield.init();
+}
